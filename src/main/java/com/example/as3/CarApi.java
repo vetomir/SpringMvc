@@ -32,6 +32,7 @@ public class CarApi {
     ResponseEntity<List<Car>> getAll(){
         return new ResponseEntity<>(carList, HttpStatus.OK);
     }
+
     @GetMapping(value = "/{id}",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity<Car> getCar(@Validated @PathVariable Integer id){
         Optional<Car> result = carList.stream().filter(x -> x.getId() == id).findFirst();
@@ -41,6 +42,21 @@ public class CarApi {
         else
             return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    ResponseEntity<List<Car>> getByColor(@RequestParam String color){
+        List<Car> result = new ArrayList<>();
+        carList.stream()
+                .filter(x -> x.getColor().displayName().equals(color))
+                .forEach(x -> result.add(x));
+
+        if(result.size() > 0){
+            return new ResponseEntity(result, HttpStatus.OK);
+        }
+            else
+                    return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
     @PostMapping(produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity addCar(@Validated @RequestBody Car car){
         boolean add = carList.add(car);
