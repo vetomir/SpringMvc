@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/awsm.css/dist/awsm_theme_big-stone.min.css">
+    <link href="../static/style.css" th:href="@{/style.css}" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car - Api</title>
+</head>
+<body>
+<main>
+    <form  action="#" method="post" th:action="@{/cars}" th:object="${car}">
+        <p>
+            <button type="submit" name="add">Dodaj</button>
+            <button type="submit" name="edit">Edytuj</button>
+            <button type="submit" name="delete">Usuń</button>
+        </p>
+    </form>
+
+        <fieldset>
+            <legend>CAR API</legend>
+
+
+            <!--/*@thymesVar id="project" type="com.example.as3.model.Car"*/-->
+            <form th:if="${!addEdit.equals('delete')}" action="#" method="post" th:action="@{/cars}" th:object="${car}">
+
+
+                <div th:if="${addEdit.equals('add')}">
+                    <label>Marka
+                        <input type="text" th:field ="*{mark}" th:errorclass="'Bdc(red)'"/>
+                    </label>
+                    <label>Model
+                        <input type="text" th:field ="*{model}" th:errorclass="'Bdc(red)'"/>
+                    </label>
+
+                    <select th:field="*{color}">
+                        <option  th:each="c : ${T(com.example.as3.model.Color).values()}"
+                                 th:value="${c.name()}"
+                                 th:text="${c}">
+                        </option>
+                    </select>
+                    <button type="submit">Dodaj</button>
+                </div>
+
+                <div th:if="${addEdit.equals('edit')}">
+                    <label>Marka
+                        <input type="text" th:field ="*{mark}" th:errorclass="'Bdc(red)'"/>
+                    </label>
+                    <label>Model
+                        <input type="text" th:field ="*{model}" th:errorclass="'Bdc(red)'"/>
+                    </label>
+
+                    <select th:field="*{color}">
+                        <option  th:each="c : ${T(com.example.as3.model.Color).values()}"
+                                 th:value="${c.name()}"
+                                 th:text="${c}">
+                        </option>
+                    </select>
+
+                    <label>Id
+                        <select th:field="*{id}">
+                            <!--/*@thymesVar id="projects" type="com.example.as3.model.Car"*/-->
+                            <option  th:each="carsInList : ${cars}"
+                                     th:value="${carsInList.getId()}"
+                                     th:text="${carsInList.getId()}">
+                            </option>
+                        </select>
+                    </label>
+                    <button type="submit">Edytuj</button>
+                </div>
+                <p>
+
+                    <button type="reset">Wyczyść Pola</button>
+                </p>
+            </form>
+
+            <form th:if="${addEdit.equals('delete')}"  action="#" method="post" name="deleteCar" th:action="@{/cars}" th:object="${mockCar}">
+                <div >
+
+                    <label>Id
+
+                        <select name="deleteCar" th:field="*{id}">
+
+                            <option  th:each="carsInList : ${cars}"
+                                     th:value="${carsInList.getId()}"
+                                     th:text="${carsInList.getId()}">
+                            </option>
+                        </select>
+                    </label>
+                    <button name="deleteCar" type="submit">Usuń</button>
+                </div>
+
+
+                <p>
+
+                    <button type="reset">Wyczyść Pola</button>
+                </p>
+            </form>
+
+
+            <!--                <fieldset>
+                                <label>
+                                    <input type="number" th:field="${identify}" required value="wybierz id"/>
+                                    <button type="submit">Edytuj</button>
+                                </label>
+                            </fieldset>-->
+
+            <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+            <h1 th:if="${message != null}" th:text="${message}"></h1>
+
+                <!--/*@thymesVar id="projects" type="com.example.as3.model.Car"*/-->
+                <dl th:each="carsInList : ${cars}" class="Bd P(10px)">
+                        <ul>
+                            <li th:text="|marka: ${carsInList.mark}/ model: ${carsInList.model}/ color:${carsInList.color} |"></li>
+                        </ul>
+                    </dd>
+                </dl>
+
+    </fieldset>
+</main>
+</body>
+</html>

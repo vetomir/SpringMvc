@@ -13,29 +13,22 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/cars")
+@RequestMapping("/api")
 public class CarApi {
-    private List<Car> carList;
+    private CarService service;
 
-    public CarApi() {
-        carList = new ArrayList<>();
-
-        carList.add(new Car(1, "Volvo", "S60", Color.RED));
-        carList.add(new Car(2, "BMW", "E90", Color.BLUE));
-        carList.add(new Car(3, "Audi", "A6", Color.BLACK));
-        carList.add(new Car(4, "Mercedes-Benz", "A-Klasse", Color.GREEN));
-        carList.add(new Car(5, "Opel", "Omega", Color.YELLOW));
-        carList.add(new Car(6, "Fiat", "Punto", Color.RED));
+    public CarApi(final CarService service) {
+        this.service = service;
     }
 
     @GetMapping(value = "/all",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity<List<Car>> getAll(){
-        return new ResponseEntity<>(carList, HttpStatus.OK);
+        return new ResponseEntity<>(service.getCarList(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity<Car> getCar(@Validated @PathVariable Integer id){
-        Optional<Car> result = carList.stream().filter(x -> x.getId() == id).findFirst();
+        Optional<Car> result = service.getCarList().stream().filter(x -> x.getId() == id).findFirst();
         if(result.isPresent()) {
             return new ResponseEntity(result, HttpStatus.OK);
         }
@@ -46,8 +39,8 @@ public class CarApi {
     @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity<List<Car>> getByColor(@RequestParam String color){
         List<Car> result = new ArrayList<>();
-        carList.stream()
-                .filter(x -> x.getColor().displayName().equals(color))
+        service.getCarList().stream()
+                .filter(x -> x.getColor().getDisplayValue().equals(color))
                 .forEach(x -> result.add(x));
 
         if(result.size() > 0){
@@ -59,33 +52,12 @@ public class CarApi {
 
     @PostMapping(produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
     ResponseEntity addCar(@Validated @RequestBody Car car){
-        boolean add = carList.add(car);
+        boolean add = service.getCarList().add(car);
         if (add){
             return new ResponseEntity(HttpStatus.ACCEPTED);
         }
         else
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    @PutMapping(value = "/{id}",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
-    ResponseEntity putCar(@PathVariable Integer id, @Validated @RequestBody Car car) {
-
-        Optional<Car> oldVideo = carList.stream().filter(x -> x.getId() == id).findFirst();
-        if (oldVideo.isPresent()) {
-            carList.remove(oldVideo.get());
-            carList.add(car);
-            return new ResponseEntity(HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    @DeleteMapping(value = "/{id}",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
-    ResponseEntity<Car> removeCar(@PathVariable Integer id){
-        Optional<Car> result = carList.stream().filter(x -> x.getId() == id).findFirst();
-        if(result.isPresent()) {
-            carList.remove(result.get());
-            return new ResponseEntity( HttpStatus.OK);
-        }
-        else
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
 }

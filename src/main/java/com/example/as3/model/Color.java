@@ -7,15 +7,15 @@ public enum Color {
     YELLOW("Yellow"),
     GREEN("Green");
 
-    private String displayName;
+    private final String displayValue;
 
-    Color(String displayName) {
-        this.displayName = displayName;
+    Color(String displayValue) {
+        this.displayValue = displayValue;
     }
 
-    public String displayName() { return displayName; }
+    public String getDisplayValue() {
+        return displayValue;
+    }
 
-
-
-    @Override public String toString() { return displayName; }
+    @Override public String toString() { return displayValue; }
 }
